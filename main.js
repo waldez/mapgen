@@ -52,7 +52,8 @@ console.log('!W! - tmp:', tmp);
     link(nodes[2], nodes[3], LINK_TYPES.SOURCE);
     link(nodes[3], nodes[4], LINK_TYPES.BOTH_WAYS);
     link(nodes[4], nodes[1], LINK_TYPES.SOURCE);
-    // link(nodes[1], nodes[5], LINK_TYPES.SOURCE);
+
+    // link(nodes[5], nodes[0], LINK_TYPES.TARGET);
 
     const graph = new Graph(nodes);
 
