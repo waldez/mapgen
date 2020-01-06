@@ -1,5 +1,7 @@
 'use strict';
 
+const { isIterable } = require('./utils');
+
 class Grid {
 
     constructor(predecessor, items) {
@@ -15,8 +17,10 @@ class Grid {
             pred: predecessor,
         });
 
-        if (Array.isArray(items)) {
-            items.forEach(args => this.set(...args));
+        if (isIterable(items)) {
+            for (const args of items) {
+                this.set(...args);
+            }
         }
     }
 
@@ -77,6 +81,14 @@ class Grid {
         }
     }
 
+    clone() {
+        return new Grid(null, this.cells({
+            originShift: false,
+            everyCell: false,
+            sorted: false
+        }));
+    }
+
     *cells({ originShift, everyCell, sorted }) {
 
         let xOffset = 0;
@@ -105,11 +117,6 @@ class Grid {
             }
         } else {
             // TODO: sorted version ignored for now... it will be pain in the butt to implement...
-            for (const [y, xAxis] of this.yAxis) {
-                for (const [x, data] of xAxis) {
-                    yield [x + xOffset, y + yOffset, data];
-                }
-            }
 
             // TODO: FIX - resolve, if there is item on same x,y coordinates in predecessor
             if (this.pred) {
@@ -118,6 +125,12 @@ class Grid {
                     everyCell: false,
                     sorted
                 });
+            }
+
+            for (const [y, xAxis] of this.yAxis) {
+                for (const [x, data] of xAxis) {
+                    yield [x + xOffset, y + yOffset, data];
+                }
             }
         }
     }

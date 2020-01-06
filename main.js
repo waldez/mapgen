@@ -129,11 +129,23 @@ function listAllCells(grid) {
     console.log('!W! - grid2.getBounds():', grid2.getBounds());
     console.log('!W! - grid2.dimensions:', grid2.dimensions);
 
+    console.log('!W! - grid2.pred:', grid2.pred);
     console.log(`!W! - ===================== RENDER grid 2 =====================\n`);
     const lines2 = simpleGridRenderer(grid2);
     console.log(lines2);
 
     console.log(`!W! - ===================== List grid 2 =====================\n`);
     console.log(listAllCells(grid2));
+
+
+
+    const grid3 = grid2.clone();
+    console.log('!W! - grid3.pred:', grid3.pred);
+    console.log(`!W! - ===================== RENDER grid 3 =====================\n`);
+    const lines3 = simpleGridRenderer(grid3);
+    console.log(lines3);
+
+    console.log(`!W! - ===================== List grid 3 =====================\n`);
+    console.log(listAllCells(grid3));
 })();
 

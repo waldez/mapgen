@@ -1,5 +1,13 @@
 'use strict';
 
+function isIterable(obj) {
+    // checks for null and undefined
+    if (obj == null) {
+        return false;
+    }
+    return typeof obj[Symbol.iterator] === 'function';
+}
+
 function assert(val, msg) {
     if (!val) {
         throw new Error(msg || 'Assertation failed with value: ' + JSON.stringify(val));
@@ -30,5 +38,6 @@ function defineEnum(values) {
 
 module.exports = {
     defineEnum,
-    assert
+    assert,
+    isIterable
 };
