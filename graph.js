@@ -8,7 +8,7 @@ const LINK_TYPES = defineEnum([
     ['TARGET', 1]
 ])
 
-function createNode(name, type, minSize = 1) {
+function createNode(name, type = 'BASIC', minSize = 1) {
 
     return {
         name,

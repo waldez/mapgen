@@ -1,9 +1,10 @@
 'use strict';
 
-const Graph = require('./graph')
+const Graph = require('./graph');
+const Grid = require('./grid');
+const MapGen = require('./mapgen');
 
-console.log('Hello mapgen!');
-
+// ─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟
 // const TILES_RAW = '─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟';
 // const TILES_RAW = '─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟';
 const TILES_RAW = '━┃╼╽╾╿█SE';
@@ -19,31 +20,53 @@ const TILES = [
 
 ];
 
-const tmp = `
-━┃╼╽╾╿█SE
+// const tmp = `
+// ━┃╼╽╾╿█SE
 
 
-    █ S
-    ┃ ╿
-  █━█━█╾E
-  ┃   ╽
-  █━━━█
-`;
+//     █ S
+//     ┃ ╿
+//   █━█━█╾E
+//   ┃   ╽
+//   █━━━█
+// `;
 
-console.log('!W! - TILES:', TILES);
-console.log('!W! - tmp:', tmp);
+// console.log('!W! - TILES:', TILES);
+// console.log('!W! - tmp:', tmp);
 
-(function test() {
+function simpleGridRenderer(grid) {
+
+    let lines = '';
+    for (const [x, y, data, newLine] of grid.cells({ originShift: true, everyCell: true })) {
+        lines += (newLine ? '\n' : '') + ((data && data[0]) || '░');
+    }
+
+    return lines;
+}
+
+function listAllCells(grid) {
+
+    let lines = '';
+    for (const cell of grid.cells({ originShift: false, everyCell: false })) {
+        lines += cell.toString() + '\n';
+    }
+
+    return lines;
+}
+
+// graph test
+(function () {
     
     const { createNode, link, LINK_TYPES } = Graph;
 
     const nodes = [
-        createNode('Start', 'start'),
-        createNode('Village'),
-        createNode('Forest'),
-        createNode('Cave'),
-        createNode('Waterfall'),
-        createNode('End', 'end'),
+        createNode('Start', 'start'),   // 0
+        createNode('Village'),          // 1
+        createNode('Forest'),           // 2
+        createNode('Cave'),             // 3
+        createNode('Waterfall'),        // 4
+        createNode('End', 'end'),       // 5
+        createNode('Church'),           // 6
     ];
 
     link(nodes[0], nodes[1], LINK_TYPES.SOURCE);
@@ -52,8 +75,7 @@ console.log('!W! - tmp:', tmp);
     link(nodes[2], nodes[3], LINK_TYPES.SOURCE);
     link(nodes[3], nodes[4], LINK_TYPES.BOTH_WAYS);
     link(nodes[4], nodes[1], LINK_TYPES.SOURCE);
-
-    // link(nodes[5], nodes[0], LINK_TYPES.TARGET);
+    link(nodes[1], nodes[6], LINK_TYPES.BOTH_WAYS);
 
     const graph = new Graph(nodes);
 
@@ -64,4 +86,54 @@ console.log('!W! - tmp:', tmp);
 
     require('fs').writeFileSync(__dirname + '/test.dot', gvDot);
 
-})()
+    const mapGen = new MapGen(graph);
+    const grid = mapGen.generate();
+    console.log(`!W! - ===================== RENDER =====================\n`);
+    const lines = simpleGridRenderer(grid);
+    console.log(lines);
+})();
+
+
+// grid test
+(function () {
+
+    // GRID 1
+    const grid = new Grid(
+        null, 
+        [
+            [ 0, 0, 'Village'],
+            [-2, 0, 'Start'],
+            [ 0, 2, 'Forest'],
+            [ 2,-1, 'End'],
+            [ 2, 2, 'Cave'],
+            [ 3, 1, 'Waterfall']
+        ]
+    );
+
+    console.log('!W! - grid.getBounds():', grid.getBounds());
+    console.log('!W! - grid.dimensions:', grid.dimensions);
+
+    const { width, height } = grid.dimensions;
+
+    console.log(`!W! - ===================== RENDER grid =====================\n`);
+    const lines = simpleGridRenderer(grid);
+    console.log(lines);
+    console.log(`!W! - ===================== List grid =====================\n`);
+    console.log(listAllCells(grid));
+
+    // GRID 2
+    const grid2 = new Grid(grid);
+
+    grid2.set( 0,-2, 'Church');
+
+    console.log('!W! - grid2.getBounds():', grid2.getBounds());
+    console.log('!W! - grid2.dimensions:', grid2.dimensions);
+
+    console.log(`!W! - ===================== RENDER grid 2 =====================\n`);
+    const lines2 = simpleGridRenderer(grid2);
+    console.log(lines2);
+
+    console.log(`!W! - ===================== List grid 2 =====================\n`);
+    console.log(listAllCells(grid2));
+})();
+
