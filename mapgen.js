@@ -3,6 +3,8 @@
 const Graph = require('./graph');
 const Grid = require('./grid');
 
+const { DIRECTIONS } = Grid;
+
 const definitions = {
     BASIC: {
         nodes: {
@@ -13,6 +15,59 @@ const definitions = {
         }
     }
 };
+
+class FloodedCell {
+    /**
+     * [constructor description]
+     * @param  {Graph.DIRECTIONS} floodedFrom
+     * @param  {number} pathLength
+     * @return {FloodedCell}
+     */
+    constructor(floodedFrom, pathLength) {
+
+        Object.assign(this, { floodedFrom, pathLength });
+    }
+
+    toString() {
+        return this.pathLength.toString();
+    }
+}
+
+const STEP_VECTORS = {
+    TOP: [0, -1],
+    RIGHT: [1, 0],
+    BOTTOM: [0, 1],
+    LEFT: [-1, 0]
+}
+
+function markAdjacentCells(fillGrid, x, y, mask, path, maxPath) {
+
+    for (const direction of DIRECTIONS) {
+        const [xStep, yStep] = STEP_VECTORS[direction];
+        const xA = x + xStep;
+        const yA = y + yStep;
+
+        // TODO: ....
+
+    }
+}
+
+/**
+ * @param  {Grid} grid
+ * @param  {number} x
+ * @param  {number} y
+ * @param  {Set} mask determins which cell types (if not empty) are taken as empty, so they can be flooded
+ * @param  {Number} minPath
+ * @param  {Number} maxPath
+ */
+function floodFill(grid, x, y, mask, minPath = 1, maxPath = 8) {
+
+    const filledGrid = new Grid(grid);
+
+
+
+    return filledGrid.detachPredecessor();
+}
 
 class MapGen {
 
@@ -42,7 +97,6 @@ class MapGen {
         // for (const [x, y, data, newLine] of grid.cells({ originShift: true, everyCell: true })) {
         //     lines += (newLine ? '\n' : '') + ((data && data[0]) || '░');
         // }
-
 
         return grid;
     }

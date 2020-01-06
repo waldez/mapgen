@@ -6,16 +6,37 @@ const LINK_TYPES = defineEnum([
     ['BOTH_WAYS', 0],
     ['SOURCE', -1],
     ['TARGET', 1]
-])
+]);
+
+const DIRECTIONS = defineEnum([
+    ['TOP', -2],
+    ['RIGHT', 1],
+    ['BOTTOM', 2],
+    ['LEFT', -1]
+]);
+
+class Node {
+
+    constructor(name, type = 'BASIC', minSize = 1) {
+
+        Object.assign(this, {
+            name,
+            type,
+            minSize,
+            links: new Set()
+        });
+    }
+}
 
 function createNode(name, type = 'BASIC', minSize = 1) {
 
-    return {
-        name,
-        type,
-        minSize,
-        links: new Set()
-    };
+    return new Node(name, type, minSize);
+    // return {
+    //     name,
+    //     type,
+    //     minSize,
+    //     links: new Set()
+    // };
 }
 
 
@@ -89,6 +110,8 @@ class Graph {
     }
 }
 
+Graph.Node = Node;
+Graph.DIRECTIONS = DIRECTIONS;
 Graph.LINK_TYPES = LINK_TYPES;
 Graph.link = link;
 Graph.createNode = createNode;

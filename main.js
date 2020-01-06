@@ -93,7 +93,6 @@ function listAllCells(grid) {
     console.log(lines);
 })();
 
-
 // grid test
 (function () {
 
@@ -110,7 +109,7 @@ function listAllCells(grid) {
         ]
     );
 
-    console.log('!W! - grid.getBounds():', grid.getBounds());
+    console.log('!W! - grid.bounds:', grid.bounds);
     console.log('!W! - grid.dimensions:', grid.dimensions);
 
     const { width, height } = grid.dimensions;
@@ -126,7 +125,7 @@ function listAllCells(grid) {
 
     grid2.set( 0,-2, 'Church');
 
-    console.log('!W! - grid2.getBounds():', grid2.getBounds());
+    console.log('!W! - grid2.bounds:', grid2.bounds);
     console.log('!W! - grid2.dimensions:', grid2.dimensions);
 
     console.log('!W! - grid2.pred:', grid2.pred);
@@ -136,8 +135,6 @@ function listAllCells(grid) {
 
     console.log(`!W! - ===================== List grid 2 =====================\n`);
     console.log(listAllCells(grid2));
-
-
 
     const grid3 = grid2.clone();
     console.log('!W! - grid3.pred:', grid3.pred);

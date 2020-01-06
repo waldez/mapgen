@@ -24,6 +24,17 @@ class Grid {
         }
     }
 
+    detachPredecessor() {
+
+        this.pred = undefined;
+        return this;
+    }
+
+    attachPredecessor(predecessor) {
+        this.pred = predecessor;
+        return this;
+    }
+
     get(x, y) {
 
         const xAxis = this.yAxis.get(y);
@@ -49,26 +60,26 @@ class Grid {
         return this;
     }
 
-    get nonEmptyCellsCount() {
+    get filledCellsCount() {
 
-        const predCount = this.pred && this.pred.nonEmptyCellsCount || 0;
+        const predCount = this.pred && this.pred.filledCellsCount || 0;
         return predCount + this.occupiedCells;
     }
 
     get dimensions() {
 
-        const { xMin, xMax, yMin, yMax } = this.getBounds();
+        const { xMin, xMax, yMin, yMax } = this.bounds;
         return {
             width: xMax - xMin + 1,
             height: yMax - yMin + 1
         }
     }
 
-    getBounds() {
+    get bounds() {
 
         if (this.pred) {
             const { xMin, xMax, yMin, yMax } = this;
-            const predBounds = this.pred.getBounds();
+            const predBounds = this.pred.bounds;
             return {
                 xMin: Math.min(xMin, predBounds.xMin),
                 xMax: Math.max(xMax, predBounds.xMax),
@@ -94,7 +105,7 @@ class Grid {
         let xOffset = 0;
         let yOffset = 0;
 
-        const { xMin, xMax, yMin, yMax } = this.getBounds();
+        const { xMin, xMax, yMin, yMax } = this.bounds;
 
         if (originShift) {
             if (originShift === true) {

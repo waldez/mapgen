@@ -20,7 +20,7 @@ function assert(val, msg) {
 function defineEnum(values) {
 
     const result = {};
-
+    const unifiedValues = [];
     for (let i = 0; i < values.length; ++i) {
         const value = values[i];
         let index = i;
@@ -31,7 +31,10 @@ function defineEnum(values) {
         }
         result[index] = name;
         result[name] = index;
+        unifiedValues.push([name, index]);
     }
+
+    result[Symbol.iterator] = function* () { yield* unifiedValues; };
 
     return result;
 }
