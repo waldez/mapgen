@@ -8,13 +8,6 @@ const LINK_TYPES = defineEnum([
     ['TARGET', 1]
 ]);
 
-const DIRECTIONS = defineEnum([
-    ['TOP', -2],
-    ['RIGHT', 1],
-    ['BOTTOM', 2],
-    ['LEFT', -1]
-]);
-
 class Node {
 
     constructor(name, type = 'BASIC', minSize = 1) {
@@ -111,7 +104,6 @@ class Graph {
 }
 
 Graph.Node = Node;
-Graph.DIRECTIONS = DIRECTIONS;
 Graph.LINK_TYPES = LINK_TYPES;
 Graph.link = link;
 Graph.createNode = createNode;

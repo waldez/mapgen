@@ -4,6 +4,11 @@ const Graph = require('./graph');
 const Grid = require('./grid');
 const MapGen = require('./mapgen');
 
+const chalk = require('chalk');
+
+// TODO: TMP: smazat
+const floodFill = require('./floodfill');
+
 // ─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟
 // const TILES_RAW = '─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟';
 // const TILES_RAW = '─━│┃┄┅┆┇┈┉┊┋┌┍┎┏┐┑┒┓└┕┖┗┘┙┚┛├┝┞┟┠┡┢┣┤┥┦┧┨┩┪┫┬┭┮┯┰┱┲┳┴┵┶┷┸┹┺┻┼┽┾┿╀╁╂╃╄╅╆╇╈╉╊╋╌╍╎╏═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▁▂▃▄▅▆▇█▉▊▋▌▍▎▏▐░▒▓▔▕▖▗▘▙▚▛▜▝▞▟';
@@ -34,11 +39,14 @@ const TILES = [
 // console.log('!W! - TILES:', TILES);
 // console.log('!W! - tmp:', tmp);
 
-function simpleGridRenderer(grid) {
+function cellRenderer(data) { return ((data && data[0]) || chalk.blackBright('░')); }
+function fillCellRenderer(data) { return ((data && (data.pathLength || (data[0] && chalk.red(data[0])))) || chalk.blackBright('░')); }
+
+function simpleGridRenderer(grid, renderFn = cellRenderer) {
 
     let lines = '';
     for (const [x, y, data, newLine] of grid.cells({ originShift: true, everyCell: true })) {
-        lines += (newLine ? '\n' : '') + ((data && data[0]) || '░');
+        lines += (newLine ? '\n' : '') + renderFn(data);
     }
 
     return lines;
@@ -96,6 +104,7 @@ function listAllCells(grid) {
 // grid test
 (function () {
 
+    // return;
     // GRID 1
     const grid = new Grid(
         null, 
@@ -144,5 +153,30 @@ function listAllCells(grid) {
 
     console.log(`!W! - ===================== List grid 3 =====================\n`);
     console.log(listAllCells(grid3));
+
+    console.log(`!W! - ===================== Floodfill test =====================\n`);
+
+    const floodedGrid = floodFill(grid, 3, 3, undefined, 6);
+    const floodedLines = simpleGridRenderer(floodedGrid, fillCellRenderer);
+    console.log(floodedLines);
+
+    console.log(`!W! - ===================== Floodfill test 2 =====================\n`);
+
+    const gridWall = new Grid(
+        null, 
+        [
+            [-2,-3, '|'],
+            [-2,-2, '|'],
+            [-2,-1, '|'],
+            [-2, 0, '|'],
+            [-3, 0, '-'],
+            [-4, 0, '-']
+        ]
+    );
+
+    const floodedGrid2 = floodFill(gridWall, 0, 0, undefined, 9);
+    console.log(simpleGridRenderer(floodedGrid2, fillCellRenderer));
+
+    console.log(simpleGridRenderer(gridWall, fillCellRenderer));
 })();
 
