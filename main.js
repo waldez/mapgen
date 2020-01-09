@@ -41,6 +41,7 @@ const TILES = [
 
 function cellRenderer(data) { return ((data && data[0]) || chalk.blackBright('░')); }
 function fillCellRenderer(data) { return ((data && (data.pathLength || (data[0] && chalk.red(data[0])))) || chalk.blackBright('░')); }
+function mapCellRenderer(data) { return (data && data.node && data.node.name[0]) || chalk.blackBright('░'); }
 
 function simpleGridRenderer(grid, renderFn = cellRenderer) {
 
@@ -74,7 +75,7 @@ function listAllCells(grid) {
         createNode('Cave'),             // 3
         createNode('Waterfall'),        // 4
         createNode('End', 'end'),       // 5
-        createNode('Church'),           // 6
+        // createNode('Church'),           // 6
     ];
 
     link(nodes[0], nodes[1], LINK_TYPES.SOURCE);
@@ -83,7 +84,7 @@ function listAllCells(grid) {
     link(nodes[2], nodes[3], LINK_TYPES.SOURCE);
     link(nodes[3], nodes[4], LINK_TYPES.BOTH_WAYS);
     link(nodes[4], nodes[1], LINK_TYPES.SOURCE);
-    link(nodes[1], nodes[6], LINK_TYPES.BOTH_WAYS);
+    // link(nodes[1], nodes[6], LINK_TYPES.BOTH_WAYS);
 
     const graph = new Graph(nodes);
 
@@ -97,14 +98,14 @@ function listAllCells(grid) {
     const mapGen = new MapGen(graph);
     const grid = mapGen.generate();
     console.log(`!W! - ===================== RENDER =====================\n`);
-    const lines = simpleGridRenderer(grid);
+    const lines = simpleGridRenderer(grid, mapCellRenderer);
     console.log(lines);
 })();
 
 // grid test
 (function () {
 
-    // return;
+    return;
     // GRID 1
     const grid = new Grid(
         null, 
